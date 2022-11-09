@@ -1,0 +1,9 @@
+out
+dist
+node_modules
+.vscode-test/
+*.vsix
+src_macrotest.xlsm
+src_macrotest.xlsm/**
+**/.vbe
+**/.base
