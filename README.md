@@ -7,7 +7,9 @@ This is the Bat tools.
 
 * Create outline from bat comments
 
-    ![](./images/main_window.png)
+    ![](images/main_window.png)
+
+    ![](images/main_window2.png)
 
 ## Requirement
 
@@ -20,6 +22,18 @@ This is the Bat tools.
 * Create outline for a bat file.
 
     Comment '@rem # outlineXXX ' is collected for outline.
+
+## Settings
+
+
+* Outline: Indexing Word
+
+    ^\s*(::|REM|@REM)\s*(#+)\s*(.*) is default setting.
+    3rd match is title, second match is for indexing.
+
+* Outline: Is Hierarchy
+
+    If On,  support outline hierarchy.
 
 ## How to build
 
@@ -39,7 +53,7 @@ vsce publish
 
 We use the following modules. Thank you very much.
 
-[see modules](./USEDMODULES.md)
+[see modules](./usedmodules.md)
 
 Create by [license-report](https://www.npmjs.com/package/license-report)
 

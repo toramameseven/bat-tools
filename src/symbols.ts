@@ -1,20 +1,33 @@
 // module name
+import { start } from 'repl';
 import * as vscode from 'vscode';
-import { SymbolInformation, Location } from 'vscode';
+import { DocumentSymbol, Location } from 'vscode';
 
 //
 export async function getDocumentSymbol(uri: vscode.Uri) {
-  const symbolInformation: SymbolInformation[] = [];
-  await updateDocumentTree(uri, symbolInformation);
-  return symbolInformation;
+  const documentSymbol: DocumentSymbol[] = [];
+  await updateDocumentTree(uri, documentSymbol);
+  return documentSymbol;
 }
 
 //
-export async function updateDocumentTree(uri: vscode.Uri, symbolInformation: SymbolInformation[]) {
-  // main
-  await parseFile(uri, symbolInformation);
+export async function updateDocumentTree(uri: vscode.Uri, documentSymbol: DocumentSymbol[]) {
+  const indexingWord =
+    vscode.workspace.getConfiguration('bat-tools').get<string>('outline.indexingWord') ??
+    '^\\s*(::|REM|@REM)\\s*(#+)\\s*(.*)';
 
-  async function parseFile(uri: vscode.Uri, symbolInformation: SymbolInformation[]) {
+  const indexingReg = RegExp(indexingWord, 'i');
+
+  const isHierarchy = vscode.workspace
+    .getConfiguration('bat-tools')
+    .get<string>('outline.isHierarchy');
+
+  const hierarchyIndexes = new Map<number, DocumentSymbol>();
+
+  // main
+  await parseFile(uri, documentSymbol);
+
+  async function parseFile(uri: vscode.Uri, documentSymbol: DocumentSymbol[]) {
     let textDocument: vscode.TextDocument | undefined;
     await vscode.workspace.openTextDocument(uri).then((document) => {
       textDocument = document;
@@ -26,7 +39,7 @@ export async function updateDocumentTree(uri: vscode.Uri, symbolInformation: Sym
 
     try {
       for (let line = 0; line < textDocument.lineCount; line++) {
-        parseLine(textDocument, line, symbolInformation);
+        parseLine(textDocument, line, documentSymbol);
       }
     } catch (e) {
       console.log(e);
@@ -36,20 +49,34 @@ export async function updateDocumentTree(uri: vscode.Uri, symbolInformation: Sym
   function parseLine(
     document: vscode.TextDocument,
     line: number,
-    symbolInformation: SymbolInformation[]
+    documentSymbol: DocumentSymbol[]
   ) {
     const textLine = document.lineAt(line);
-    const commentRegex = /^\s*(::|REM|@REM)\s*(#+)\s*(.*)/i;
-    const matches = textLine.text.match(commentRegex);
+    const matches = textLine.text.match(indexingReg);
     if (matches) {
-      const symbol = new SymbolInformation(
+      const symbol = new DocumentSymbol(
         matches[3],
-        vscode.SymbolKind.String,
         '',
-        new Location(document.uri, textLine.range)
+        vscode.SymbolKind.String,
+        textLine.range,
+        textLine.range
       );
-      // add to collections
-      symbolInformation.push(symbol);
+
+      let hierarchyIndex = matches[2].toString().length;
+      const maxIndex = 5;
+      hierarchyIndex > maxIndex && (hierarchyIndex = maxIndex);
+      hierarchyIndexes.set(hierarchyIndex, symbol);
+
+      let parentSymbol;
+      for (let i = 1; i < hierarchyIndex; i++) {
+        hierarchyIndexes.get(i) && (parentSymbol = hierarchyIndexes.get(i));
+      }
+      // add to root collections or parent
+      if (parentSymbol && isHierarchy) {
+        parentSymbol.children.push(symbol);
+      } else {
+        documentSymbol.push(symbol);
+      }
     }
   }
 }
