@@ -28,7 +28,7 @@ This is the Bat tools.
 
 * Outline: Indexing Word
 
-    ^\s*(::|REM|@REM)\s*(#+)\s*(.*) is defalut setting.
+    ^\s*(::|REM|@REM)\s*(#+)\s*(.*) is default setting.
     3rd match is title, second match is for indexing.
 
 * Outline: Is Hierarchy
