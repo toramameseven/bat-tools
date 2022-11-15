@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+### Added
+
+## [0.0.2] - 2022-11-BB
+
+* hierarchy outline support
+* outline indexing word setting
+
 
 ## [0.0.1] - 2022-11-AA
 

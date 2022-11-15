@@ -2,7 +2,7 @@
   "name": "bat-tools",
 	"displayName": "Bat Tools",
 	"description": "Provide outline v0.0.1.3",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publisher": "toramameseven",
   "author": {
     "name": "toramame-seven"
@@ -49,6 +49,25 @@
     "onLanguage:bat"
   ],
   "main": "./out/extension.js",
+  "contributes": {
+    "configuration": {
+			"title": "bat-tools",
+			"properties": {
+				"bat-tools.outline.indexingWord": {
+					"type": "string",
+					"default": "^\\s*(::|REM|@REM)\\s*(#+)\\s*(.*)",
+					"description": "Indexing word.",
+					"order": 1
+				},
+				"bat-tools.outline.isHierarchy": {
+					"type": "boolean",
+					"default": true,
+					"description": "If On, support hierarchy outline",
+					"order": 2
+				}
+			}
+		}
+  },
   "devDependencies": {
     "@types/node": "^18.7.23",
     "@types/vscode": "^1.71.0",
