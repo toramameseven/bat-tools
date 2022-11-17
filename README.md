@@ -53,7 +53,7 @@ vsce publish
 
 We use the following modules. Thank you very much.
 
-[see modules](./usedmodules.md)
+[see modules](./USEDMODULES.md)
 
 Create by [license-report](https://www.npmjs.com/package/license-report)
 
