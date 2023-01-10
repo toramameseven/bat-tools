@@ -11,3 +11,5 @@ vsc-extension-quickstart.md
 xlsms/**
 docs
 node_modules
+sampleBat
+license-report-config.json

@@ -1,7 +1,6 @@
 // module name
-import { start } from 'repl';
 import * as vscode from 'vscode';
-import { DocumentSymbol, Location } from 'vscode';
+import { DocumentSymbol } from 'vscode';
 
 //
 export async function getDocumentSymbol(uri: vscode.Uri) {
@@ -12,6 +11,16 @@ export async function getDocumentSymbol(uri: vscode.Uri) {
 
 //
 export async function updateDocumentTree(uri: vscode.Uri, documentSymbol: DocumentSymbol[]) {
+  // if is supported file type?
+  const supportExtensions =
+    vscode.workspace.getConfiguration('bat-tools').get<string>('outline.fileType') ?? 'bat';
+  const supportExtensionArray = supportExtensions.split(',').map((l) => l.toLowerCase());
+  const fileSplitByDot = uri.fsPath.split('.');
+  const targetFileType = fileSplitByDot.length > 1 ? fileSplitByDot.pop()?.toLowerCase() : '';
+  if (!supportExtensionArray.includes(targetFileType ?? '')) {
+    return;
+  }
+
   const indexingWord =
     vscode.workspace.getConfiguration('bat-tools').get<string>('outline.indexingWord') ??
     '^\\s*(::|REM|@REM)\\s*(#+)\\s*(.*)';
